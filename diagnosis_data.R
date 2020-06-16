@@ -5,9 +5,9 @@ library(RMySQL)
 library(dplyr)
 library(lubridate)
 library(tidyr)
+load("pass.RData")#pulling up database passworf
 
-
-db_connection <- dbConnect(MySQL(), user="saemi", password="PASSWORD (ATH ÞETTA ER EKKI PASSWORDIÐ)" , dbname="istopmm_data", host="127.0.0.1")
+db_connection <- dbConnect(MySQL(), user="saemi", password=pass , dbname="istopmm_data", host="127.0.0.1")
 
 dbListTables(db_connection)
 
@@ -73,3 +73,6 @@ primarycare_dat <- left_join(pc_codes,pc_visits,by="consult_id") %>%
 
 diagnosis_data <- bind_rows(admission_data,outp_data,primarycare_dat) %>%
   select(study_id,admission_date,discharge_date,coding_system, code,code_order,outp_service,src) #Ordering columns neatly
+
+#Cleanup so that only diagnosis_data dataset remains
+rm(admission_data,db_connection,komur,komur_codes,legur,legur_codes,outp_data,pc_codes,pc_visits,primarycare_dat,pass)

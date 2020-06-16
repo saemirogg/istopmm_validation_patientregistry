@@ -1,7 +1,8 @@
+## R script that creates a table of all the different diagnostic codes in the diagnosis_data dataset
+
 #Subset of data with only ICD-10 codes
 code_data <- diagnosis_data %>%
   filter(coding_system=="ICD-10")
-
 
 #n of different visits, admissions etc. Since all have at least 1 code. We can count the number of first codes for each type
 n_visits <- diagnosis_data %>%
