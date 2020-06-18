@@ -20,7 +20,7 @@ code_table <- diagnosis_data %>%
             n_outp=sum(src=="hospital_outpatient"),
             n_pc=sum(src=="primary_care")
   ) %>%
-  mutate(per100k_all=round(n_all*100000/as.numeric(n_visits[1,2]),digits = 2),
+  mutate(per100k_all=round(n_all*100000/sum(n_visits$n),digits = 2),
          per100k_admissions=round(n_admissions*100000/as.numeric(n_visits[1,2]),digits = 2),
          per100k_outp=round(n_outp*100000/as.numeric(n_visits[2,2]),digits = 2),
          per100k_pc=round(n_pc*100000/as.numeric(n_visits[3,2]),digits = 2))
