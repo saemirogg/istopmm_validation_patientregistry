@@ -23,12 +23,19 @@ for(i in 1:nrow(diagnostic_codes)){
   set.seed(5) #reproducible randomness
   
   #We create a single file for each comorbidity we plan to validate
-  exp_data <- id_data %>%
+  pos_data <- id_data %>%
     mutate(comorbidity=str_detect(code,diagnostic_codes$search_string[i]))%>%
-    group_by(comorbidity)%>%
-    filter(!duplicated(study_id))%>% #In order to retrive unique ids i.e. not repeated ids
-    sample_n(30) %>%
-    data.frame() %>% #resolving formatting issue for write.xlsx function
-    write.xlsx(.,file=str_replace_all(paste(diagnostic_codes$comorbidity[i],"_validation_dataset_",Sys.Date(),".xlsx",sep=""),"-",""))
+    filter(comorbidity) %>%
+    filter(!duplicated(study_id))%>% #In order to retrieve unique ids
+    sample_n(30)
+  
+  neg_data <- id_data %>%
+    mutate(comorbidity=str_detect(code,diagnostic_codes$search_string[i]))%>%
+    filter(!comorbidity, !(study_id %in% pos_data$study_id)) %>%
+    filter(!duplicated(study_id))%>%
+    sample_n(30)
+    
+    
+    write.xlsx(bind_rows(pos_data,neg_data),file=str_replace_all(paste(diagnostic_codes$comorbidity[i],"_validation_dataset_",Sys.Date(),".xlsx",sep=""),"-",""))
   
 }
