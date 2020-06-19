@@ -8,7 +8,8 @@ source(diagnosis_data.R)
 
 #Creating distinct codes for individuals
 id_data <- diagnosis_data %>%
-  filter(coding_system=="ICD-10") %>%
+  filter(coding_system=="ICD-10",
+         str_detect(code,"^[A-Z]")) %>% #only valid ICD-10 codes
   distinct(study_id,code) %>%
   filter(!is.na(code))
 
