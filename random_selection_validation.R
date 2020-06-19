@@ -4,7 +4,7 @@ library(readxl)
 library(stringr)
 
 #We use the diagnosis data available from a previous script
-source(diagnosis_data.R)
+source("diagnosis_data.R")
 
 #Creating distinct codes for individuals
 id_data <- diagnosis_data %>%
@@ -39,3 +39,6 @@ for(i in 1:nrow(diagnostic_codes)){
     write.xlsx(bind_rows(pos_data,neg_data),file=str_replace_all(paste(diagnostic_codes$comorbidity[i],"_validation_dataset_",Sys.Date(),".xlsx",sep=""),"-",""))
   
 }
+
+#cleanup
+rm(pos_data,neg_data,id_data,diagnostic_codes,diagnosis_data,i)
