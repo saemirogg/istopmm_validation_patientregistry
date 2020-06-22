@@ -16,7 +16,7 @@ id_data <- diagnosis_data %>%
 #import diagnostic codes
 diagnostic_codes <- read_xlsx("codes_validation.xlsx") %>%
   group_by(comorbidity) %>%
-  summarise(search_string=paste(code,collapse="|"))
+  summarise(search_string=paste(code,collapse="|")) 
 
 #Generate random sample for each comorbidity
 for(i in 1:nrow(diagnostic_codes)){
@@ -26,13 +26,20 @@ for(i in 1:nrow(diagnostic_codes)){
   pos_data <- id_data %>%
     mutate(comorbidity=str_detect(code,diagnostic_codes$search_string[i]))%>%
     filter(comorbidity) %>%
-    filter(!duplicated(study_id))%>% #In order to retrieve unique ids
-    sample_n(30)
+    filter(!duplicated(study_id)) #In order to retrieve unique ids
 
+  #Skipping sampling to exclude positive individuals from the sampling of negativs
+  
+  set.seed(5)
   neg_data <- id_data %>%
     mutate(comorbidity=str_detect(code,diagnostic_codes$search_string[i]))%>%
     filter(!comorbidity, !(study_id %in% pos_data$study_id)) %>% #Removing individuals who have other diagnoses than the one of interest
     filter(!duplicated(study_id))%>%
+    sample_n(30)
+  
+  set.seed(5)
+  #Now we can sample from the positive dataset
+  pos_data <- pos_data %>%
     sample_n(30)
     
     write.xlsx(bind_rows(pos_data,neg_data),file=str_replace_all(paste(diagnostic_codes$comorbidity[i],"_validation_dataset_",Sys.Date(),".xlsx",sep=""),"-",""))
