@@ -28,13 +28,12 @@ for(i in 1:nrow(diagnostic_codes)){
     filter(comorbidity) %>%
     filter(!duplicated(study_id))%>% #In order to retrieve unique ids
     sample_n(30)
-  
+
   neg_data <- id_data %>%
     mutate(comorbidity=str_detect(code,diagnostic_codes$search_string[i]))%>%
-    filter(!comorbidity, !(study_id %in% pos_data$study_id)) %>%
+    filter(!comorbidity, !(study_id %in% pos_data$study_id)) %>% #Removing individuals who have other diagnoses than the one of interest
     filter(!duplicated(study_id))%>%
     sample_n(30)
-    
     
     write.xlsx(bind_rows(pos_data,neg_data),file=str_replace_all(paste(diagnostic_codes$comorbidity[i],"_validation_dataset_",Sys.Date(),".xlsx",sep=""),"-",""))
   
