@@ -74,5 +74,14 @@ primarycare_dat <- left_join(pc_codes,pc_visits,by="consult_id") %>%
 diagnosis_data <- bind_rows(admission_data,outp_data,primarycare_dat) %>%
   select(study_id,admission_date,discharge_date,coding_system, code,code_order,outp_service,src) #Ordering columns neatly
 
+#Create a file with only icd_10 codes
+icd_diagnosis_data <- diagnosis_data %>%
+  filter(coding_system=="ICD-10",
+         str_detect(code,"^[A-Z]")) %>%
+  select(-coding_system)
+
+save(icd_diagnosis_data,file="icd_diagnosis_data.RData")
+
+
 #Cleanup so that only diagnosis_data dataset remains
 rm(admission_data,db_connection,komur,komur_codes,legur,legur_codes,outp_data,pc_codes,pc_visits,primarycare_dat,pass)
